@@ -1,0 +1,85 @@
+{
+  "$schema": "https://json.schemastore.org/claude-code-plugin-manifest.json",
+  "name": "ai-native-sdlc",
+  "displayName": "AI-native SDLC",
+  "version": "0.0.1",
+  "description": "Enforces the Anthropic Academy AI-native SDLC playbook as deterministic hooks: artifact chain (intent/spec/plan), test-lock during fixes, credential and protected-path guards, production release gate, and verification-before-done. Skills carry the knowledge; hooks carry the enforcement.",
+  "author": { "name": "COLORFUL" },
+  "homepage": "https://academy.claude.com/courses/ai-native-sdlc-playbook/introduction",
+  "license": "MIT",
+  "keywords": ["sdlc", "governance", "policy-as-code", "hooks", "code-review", "compliance"],
+  "userConfig": {
+    "enforcement_level": {
+      "type": "string",
+      "title": "Enforcement level",
+      "description": "advisory = level-dependent gates warn only; standard = they block (default); strict = additionally requires a plan before any source edit. The always-hard set (credentials, production deploy, protected branches, test lock, protected paths, approved exits, config self-protection) ignores this setting entirely.",
+      "default": "standard",
+      "required": false
+    },
+    "hard_hooks_locked": {
+      "type": "boolean",
+      "title": "Lock the always-hard gates",
+      "description": "When true (default), repository configuration cannot downgrade any always-hard gate. Set false only to debug the plugin itself.",
+      "default": true,
+      "required": false
+    },
+    "sdlc_config_path": {
+      "type": "string",
+      "title": "Repository config path",
+      "description": "Path, relative to the repository root, of the version-controlled policy file this plugin reads. Everything repo-specific lives there, not here.",
+      "default": ".claude/sdlc/config.json",
+      "required": false
+    },
+    "release_approval_env": {
+      "type": "string",
+      "title": "Release authorization variable",
+      "description": "Name of the environment variable carrying a named release authorization. A session cannot write its own hook process environment, so the agent cannot forge it — but a human sets it, so it is an attributable assertion rather than authentication. Block messages say so.",
+      "default": "SDLC_RELEASE_APPROVAL",
+      "required": false
+    },
+    "release_approval_route": {
+      "type": "string",
+      "title": "Route to release approval",
+      "description": "Free text naming who grants a release authorization and how, inserted verbatim into the block message (Lesson 11: a block must explain itself and the route to approval).",
+      "default": "",
+      "required": false
+    },
+    "release_gate_mode": {
+      "type": "string",
+      "title": "Release gate mode",
+      "description": "deny (default) or warn. Never 'ask': an approval prompt puts a human on the critical path of every parallel session and deadlocks non-interactive runs.",
+      "default": "deny",
+      "required": false
+    },
+    "organization_policy_url": {
+      "type": "string",
+      "title": "Organization policy URL",
+      "description": "Optional link appended to block messages so an engineer can read the source policy behind a gate.",
+      "default": "",
+      "required": false
+    },
+    "log_retention_days": {
+      "type": "number",
+      "title": "Decision ledger retention (days)",
+      "description": "SessionStart prunes decision ledger files older than this.",
+      "default": 30,
+      "min": 1,
+      "max": 365,
+      "required": false
+    },
+    "telemetry_forward_command": {
+      "type": "string",
+      "title": "Ledger forwarding command",
+      "description": "Optional command run at SessionEnd to ship the decision ledger to an observability stack. Empty means the ledger stays on this machine.",
+      "default": "",
+      "required": false
+    },
+    "probe_sensitive_value": {
+      "type": "string",
+      "title": "PHASE 0 PROBE — sensitive value",
+      "description": "TEMPORARY. Exists only to answer plan assumption B: are `sensitive: true` userConfig values exported to hook processes as CLAUDE_PLUGIN_OPTION_*? Set it to any non-empty string during Phase 0, then delete this key. Its value is never logged.",
+      "sensitive": true,
+      "required": false
+    }
+  }
+}

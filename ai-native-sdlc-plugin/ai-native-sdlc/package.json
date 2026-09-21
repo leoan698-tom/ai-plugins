@@ -1,0 +1,14 @@
+{
+  "name": "ai-native-sdlc-plugin",
+  "version": "0.0.1",
+  "private": true,
+  "type": "module",
+  "description": "Hook scripts and CLI for the ai-native-sdlc Claude Code plugin. Zero runtime dependencies by design: a hook that cannot start is a gate that fails open.",
+  "engines": { "node": ">=18" },
+  "scripts": {
+    "test": "node --test \"tests/**/*.test.mjs\"",
+    "lint:portability": "node tests/portability-lint.mjs",
+    "selftest": "node scripts/selftest.mjs",
+    "probe:read": "node scripts/probe-report.mjs"
+  }
+}

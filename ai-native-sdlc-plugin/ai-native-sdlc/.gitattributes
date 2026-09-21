@@ -1,0 +1,13 @@
+# Hook scripts must keep LF endings on every platform.
+#
+# A Windows checkout that rewrites .mjs to CRLF would not break Node, but the
+# same habit applied to the shell canary would break its shebang — and a hook
+# that fails to start exits non-zero, which Claude Code treats as a
+# NON-BLOCKING error. The tool call then proceeds: the gate fails open silently.
+# Pinning LF removes that whole class of failure.
+* text=auto eol=lf
+*.mjs text eol=lf
+*.sh text eol=lf
+*.ps1 text eol=lf
+*.json text eol=lf
+*.md text eol=lf

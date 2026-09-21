@@ -1,0 +1,89 @@
+# CI for the plugin itself.
+#
+# The matrix is the point. This plugin's whole job is to behave identically on
+# Windows, macOS and Linux, and the failures that break that are invisible
+# locally: a path normalisation bug that only shows up with backslashes, a
+# matcher that lost its PowerShell alternation, a component path that picks up a
+# backslash and then loads on Windows only. Running the suite on one OS would
+# test the one platform where the author already knows it works.
+#
+# Windows is listed first deliberately — it is the platform with no OS sandbox
+# beneath the hooks, so it is where a gate failing open has no second line.
+
+name: plugin-ci
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+
+jobs:
+  test:
+    name: test (${{ matrix.os }})
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [windows-latest, macos-latest, ubuntu-latest]
+    defaults:
+      run:
+        working-directory: ai-native-sdlc
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Unit and dispatcher tests
+        run: node --test "tests/**/*.test.mjs"
+
+      - name: Portability lint
+        run: node tests/portability-lint.mjs
+
+      # git identity is needed by the sdlc-verify tests, which build real
+      # repositories and make real commits.
+      - name: Configure git identity
+        run: |
+          git config --global user.email "ci@example.invalid"
+          git config --global user.name "CI"
+          git config --global init.defaultBranch main
+
+  validate:
+    name: claude plugin validate
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+
+      - name: Install Claude Code CLI
+        run: npm install -g @anthropic-ai/claude-code
+
+      # --strict turns warnings into errors, which is what catches a misspelled
+      # manifest field — the kind of mistake that otherwise silently disables a
+      # whole component at load time.
+      - name: Validate plugin manifest
+        run: claude plugin validate ./ai-native-sdlc --strict
+
+      - name: Validate marketplace manifest
+        run: claude plugin validate . --strict
+
+  self-check:
+    name: sdlc-verify on this repository
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0          # sdlc-verify needs the merge base
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      # The plugin enforces its own playbook on itself. If the policy set is not
+      # good enough to live under, it is not good enough to ship.
+      - name: Run the policy checks over this change
+        run: node ai-native-sdlc/bin/sdlc-verify.mjs --base origin/${{ github.base_ref || 'main' }} --head HEAD
+        if: github.event_name == 'pull_request'

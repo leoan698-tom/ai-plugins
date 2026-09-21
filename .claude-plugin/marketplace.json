@@ -1,0 +1,24 @@
+{
+  "$schema": "https://json.schemastore.org/claude-code-marketplace.json",
+  "name": "sdlc-playbook",
+  "version": "0.0.1",
+  "description": "Open-source AI plugins developed by leoan698-tom.",
+  "owner": {
+    "name": "COLORFUL"
+  },
+  "plugins": [
+    {
+      "name": "ai-native-sdlc",
+      "source": "./ai-native-sdlc-plugin/ai-native-sdlc",
+      "displayName": "AI-native SDLC",
+      "description": "Enforces the AI-native SDLC playbook as deterministic hooks. Skills carry the knowledge; hooks carry the enforcement.",
+      "category": "workflow",
+      "keywords": [
+        "sdlc",
+        "governance",
+        "policy-as-code",
+        "hooks"
+      ]
+    }
+  ]
+}

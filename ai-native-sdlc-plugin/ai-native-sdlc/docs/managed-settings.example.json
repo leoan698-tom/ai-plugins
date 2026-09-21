@@ -1,0 +1,92 @@
+{
+  "_README": [
+    "Example managed settings for an organisation deploying ai-native-sdlc.",
+    "",
+    "Managed settings are deployed by the platform team through MDM or the admin",
+    "console. They sit ABOVE every other settings layer, and an engineer cannot",
+    "override them. That is what makes this file — not the plugin — the layer",
+    "that decides whether the gates are negotiable.",
+    "",
+    "Do not copy this verbatim. Every deny rule removes a capability, and the",
+    "right balance depends on the data classification of the repositories it",
+    "covers. Start from it, then argue each line.",
+    "",
+    "THE LINE THAT MATTERS MOST is enabledPlugins. With allowManagedHooksOnly",
+    "set and this plugin NOT force-enabled there, every hook it ships is",
+    "silently blocked and the plugin looks installed while enforcing nothing.",
+    "",
+    "NOTE on sandbox.failIfUnavailable: it is false here on purpose. OS-level",
+    "sandboxing is unsupported on native Windows, so setting it true would stop",
+    "Claude Code starting at all for every Windows engineer. Set it to true only",
+    "for a fleet that is entirely macOS, Linux or WSL2 — and understand that on",
+    "Windows this plugin's hooks are then the ONLY enforcement layer, which is",
+    "why its safety-critical gates fail closed rather than open."
+  ],
+
+  "extraKnownMarketplaces": {
+    "sdlc-playbook": {
+      "source": { "source": "github", "repo": "<your-org>/ai-native-sdlc-plugin" },
+      "autoUpdate": true
+    }
+  },
+
+  "strictKnownMarketplaces": [
+    { "source": "github", "repo": "<your-org>/*" }
+  ],
+
+  "enabledPlugins": {
+    "ai-native-sdlc@sdlc-playbook": true
+  },
+
+  "allowManagedHooksOnly": true,
+
+  "pluginConfigs": {
+    "ai-native-sdlc@sdlc-playbook": {
+      "options": {
+        "enforcement_level": "standard",
+        "hard_hooks_locked": true,
+        "release_approval_env": "SDLC_RELEASE_APPROVAL",
+        "release_approval_route": "the release manager in #release-approvals",
+        "log_retention_days": 90
+      }
+    }
+  },
+
+  "permissions": {
+    "deny": [
+      "Read(.env)",
+      "Read(.env.*)",
+      "Read(./secrets/**)",
+      "Read(~/.ssh/**)",
+      "Read(~/.aws/**)",
+      "Read(~/.kube/config)"
+    ],
+    "allow": [
+      "Bash(git status:*)",
+      "Bash(git diff:*)",
+      "Bash(git log:*)",
+      "Bash(git add:*)",
+      "Bash(git commit:*)"
+    ],
+    "disableBypassPermissionsMode": "disable"
+  },
+
+  "allowManagedPermissionRulesOnly": false,
+
+  "sandbox": {
+    "enabled": true,
+    "failIfUnavailable": false,
+    "network": {
+      "allowedDomains": ["github.com", "registry.npmjs.org"]
+    },
+    "credentials": {
+      "files": [
+        { "path": "~/.ssh", "mode": "deny" },
+        { "path": "~/.aws/credentials", "mode": "deny" }
+      ]
+    }
+  },
+
+  "disableSideloadFlags": true,
+  "requiredMinimumVersion": "2.1.191"
+}

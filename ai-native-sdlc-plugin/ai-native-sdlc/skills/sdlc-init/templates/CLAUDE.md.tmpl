@@ -1,0 +1,38 @@
+# {{PROJECT_NAME}}
+
+<!--
+  Keep this under {{CLAUDE_MD_MAX_LINES}} lines. It is read in full at the start of
+  every session, so anything stale costs context for no benefit.
+
+  Working rule: when Claude makes the same mistake twice, the correction goes
+  under "Things Claude gets wrong". Once, not twice, is a coincidence.
+-->
+
+## Commands
+
+- Build: `{{BUILD_CMD}}`
+- Test: `{{TEST_CMD}}`
+- Lint: `{{LINT_CMD}}`
+
+## Conventions
+
+<!-- The handful of rules a new joiner would get wrong on day one. -->
+- TODO: add the conventions that matter here.
+
+## Architecture
+
+<!-- Where things live, and what must not be edited by hand. -->
+- TODO: describe the layout in three or four lines.
+
+## Things Claude gets wrong
+
+<!-- Grown by the two-strikes rule; pruned when a line stops being true. -->
+
+## Verifying your work
+
+- Build: `{{BUILD_CMD}}`
+- Test: `{{TEST_CMD}}` — healthy output looks like: `{{TEST_HEALTHY_EXAMPLE}}`
+- Lint: `{{LINT_CMD}}`
+
+Run these before reporting any task complete, and paste the output.
+If a test fails, fix the code, not the test. Never skip or delete a failing test.
