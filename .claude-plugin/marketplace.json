@@ -2,7 +2,7 @@
   "$schema": "https://json.schemastore.org/claude-code-marketplace.json",
   "name": "sdlc-playbook",
   "version": "0.0.1",
-  "description": "Open-source AI plugins developed by leoan698-tom.",
+  "description": "Claude Code plugins for AI-assisted development: SDLC workflows, code review, verification, and release gates.",
   "owner": {
     "name": "COLORFUL"
   },
