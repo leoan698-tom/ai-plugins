@@ -42,8 +42,8 @@ plugin does **not** implement — is in
 
 ## Install
 
-```bash
-/plugin marketplace add <your-org>/ai-native-sdlc-plugin
+```text
+/plugin marketplace add leoan698-tom/ai-plugins
 /plugin install ai-native-sdlc@sdlc-playbook
 ```
 
