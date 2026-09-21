@@ -33,8 +33,8 @@ hook 让违规几乎不可能。这里的一切设计都从认真对待这句话
 
 ## 安装
 
-```bash
-/plugin marketplace add <your-org>/ai-native-sdlc-plugin
+```text
+/plugin marketplace add leoan698-tom/ai-plugins
 /plugin install ai-native-sdlc@sdlc-playbook
 ```
 
